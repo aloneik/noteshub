@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+asyncpg
+alembic
+pydantic[email]
+passlib[bcrypt]
+python-jose[cryptography]
+python-dotenv
+pytest
+pytest-asyncio
+httpx
+asgi-lifespan
+python-multipart
+aiosqlite

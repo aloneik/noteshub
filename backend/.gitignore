@@ -1,0 +1,35 @@
+﻿# Backend specific ignores
+
+# Test databases
+test.db
+test_*.db
+*.db-journal
+
+# Debug files
+debug_test.py
+test_debug.db
+
+# Local environment files
+.env.local
+.env.development
+
+# Uvicorn/FastAPI specific
+*.pid
+*.sock
+uvicorn.log
+
+# SQLite databases
+*.sqlite
+*.sqlite3
+
+# Alembic temporary files
+alembic.ini.bak
+
+# Coverage reports
+.coverage
+htmlcov/
+coverage.xml
+
+# Temporary API test files
+temp_*.py
+test_temp_*.py
