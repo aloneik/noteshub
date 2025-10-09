@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # User schemas
@@ -14,7 +14,7 @@ class UserCreate(UserBase):
 
 class UserOut(UserBase):
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: int
 
 
@@ -46,7 +46,7 @@ class NoteUpdate(BaseModel):
 
 class NoteOut(NoteBase):
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: int
     owner_id: int
 
@@ -68,6 +68,6 @@ class PlanUpdate(BaseModel):
 
 class PlanOut(PlanBase):
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: int
     note_id: int

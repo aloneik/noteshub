@@ -7,12 +7,16 @@ from app.db import models
 
 
 # Users
-async def get_user_by_username(db: AsyncSession, username: str) -> Optional[models.User]:
+async def get_user_by_username(
+    db: AsyncSession, username: str
+) -> Optional[models.User]:
     res = await db.execute(select(models.User).where(models.User.username == username))
     return res.scalar_one_or_none()
 
 
-async def create_user(db: AsyncSession, username: str, password_hash: str) -> models.User:
+async def create_user(
+    db: AsyncSession, username: str, password_hash: str
+) -> models.User:
     user = models.User(username=username, password_hash=password_hash)
     db.add(user)
     await db.commit()
@@ -26,14 +30,20 @@ async def list_notes(db: AsyncSession, owner_id: int) -> Sequence[models.Note]:
     return res.scalars().all()
 
 
-async def get_note(db: AsyncSession, note_id: int, owner_id: int) -> Optional[models.Note]:
+async def get_note(
+    db: AsyncSession, note_id: int, owner_id: int
+) -> Optional[models.Note]:
     res = await db.execute(
-        select(models.Note).where(models.Note.id == note_id, models.Note.owner_id == owner_id)
+        select(models.Note).where(
+            models.Note.id == note_id, models.Note.owner_id == owner_id
+        )
     )
     return res.scalar_one_or_none()
 
 
-async def create_note(db: AsyncSession, owner_id: int, title: str, content: Optional[str]) -> models.Note:
+async def create_note(
+    db: AsyncSession, owner_id: int, title: str, content: Optional[str]
+) -> models.Note:
     note = models.Note(title=title, content=content, owner_id=owner_id)
     db.add(note)
     await db.commit()
@@ -41,7 +51,9 @@ async def create_note(db: AsyncSession, owner_id: int, title: str, content: Opti
     return note
 
 
-async def update_note(db: AsyncSession, note: models.Note, title: Optional[str], content: Optional[str]) -> models.Note:
+async def update_note(
+    db: AsyncSession, note: models.Note, title: Optional[str], content: Optional[str]
+) -> models.Note:
     if title is not None:
         note.title = title  # type: ignore[assignment]
     if content is not None:
@@ -64,7 +76,9 @@ async def list_plans(db: AsyncSession, note_id: int):
 
 async def get_plan(db: AsyncSession, plan_id: int, note_id: int):
     res = await db.execute(
-        select(models.Plan).where(models.Plan.id == plan_id, models.Plan.note_id == note_id)
+        select(models.Plan).where(
+            models.Plan.id == plan_id, models.Plan.note_id == note_id
+        )
     )
     return res.scalar_one_or_none()
 
@@ -90,5 +104,3 @@ async def update_plan(db: AsyncSession, plan: models.Plan, *, title=None, is_don
 async def delete_plan(db: AsyncSession, plan: models.Plan) -> None:
     await db.delete(plan)
     await db.commit()
-
-

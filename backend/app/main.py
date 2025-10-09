@@ -1,10 +1,11 @@
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
-from app.api.notes import router as notes_router
-from app.api.users import router as users_router
 from app.api.auth import router as auth_router
+from app.api.notes import router as notes_router
 from app.api.plans import router as plans_router
+from app.api.users import router as users_router
 from app.db.base import init_db
 
 
@@ -25,3 +26,8 @@ app.include_router(plans_router)
 @app.get("/")
 def root():
     return {"message": "Welcome to NoteHub!"}
+
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "service": "NoteHub API"}

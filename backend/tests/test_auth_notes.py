@@ -4,7 +4,9 @@ import pytest
 # Helper functions for test setup
 async def register_user(client, username="testuser", password="secret123"):
     """Helper function to register a user."""
-    r = await client.post("/auth/register", json={"username": username, "password": password})
+    r = await client.post(
+        "/auth/register", json={"username": username, "password": password}
+    )
     assert r.status_code == 200, r.text
     return r.json()
 
@@ -41,9 +43,11 @@ async def test_user_registration_duplicate_username(async_client):
     """Test that duplicate usernames are rejected."""
     # Register first user
     await register_user(async_client, "duplicate", "password123")
-    
+
     # Try to register same username again
-    r = await async_client.post("/auth/register", json={"username": "duplicate", "password": "password456"})
+    r = await async_client.post(
+        "/auth/register", json={"username": "duplicate", "password": "password456"}
+    )
     assert r.status_code == 400
     assert "Username taken" in r.json()["detail"]
 
@@ -61,7 +65,7 @@ async def test_user_login_success(async_client):
 async def test_user_login_invalid_credentials(async_client):
     """Test login with invalid credentials."""
     await register_user(async_client, "validuser", "password123")
-    
+
     # Try login with wrong password
     r = await async_client.post(
         "/auth/login",
@@ -89,7 +93,7 @@ async def test_user_login_nonexistent_user(async_client):
 async def test_create_note(async_client):
     """Test creating a note."""
     token = await create_authenticated_user(async_client, "noteuser", "password123")
-    
+
     r = await async_client.post(
         "/notes",
         json={"title": "Test Note", "content": "This is a test note"},
@@ -117,7 +121,7 @@ async def test_create_note_unauthorized(async_client):
 async def test_list_notes_empty(async_client):
     """Test listing notes when user has no notes."""
     token = await create_authenticated_user(async_client, "emptyuser", "password123")
-    
+
     r = await async_client.get("/notes", headers={"Authorization": f"Bearer {token}"})
     assert r.status_code == 200
     notes = r.json()
@@ -129,14 +133,14 @@ async def test_list_notes_empty(async_client):
 async def test_list_notes_with_content(async_client):
     """Test listing notes when user has notes."""
     token = await create_authenticated_user(async_client, "listuser", "password123")
-    
+
     # Create a note first
     await async_client.post(
         "/notes",
         json={"title": "Listed Note", "content": "Content"},
         headers={"Authorization": f"Bearer {token}"},
     )
-    
+
     # List notes
     r = await async_client.get("/notes", headers={"Authorization": f"Bearer {token}"})
     assert r.status_code == 200
@@ -159,30 +163,29 @@ async def test_notes_isolation_between_users(async_client):
     # Create two users
     token1 = await create_authenticated_user(async_client, "user1", "password123")
     token2 = await create_authenticated_user(async_client, "user2", "password123")
-    
+
     # User1 creates a note
     await async_client.post(
         "/notes",
         json={"title": "User1 Note", "content": "Private content"},
         headers={"Authorization": f"Bearer {token1}"},
     )
-    
+
     # User2 creates a note
     await async_client.post(
         "/notes",
         json={"title": "User2 Note", "content": "Different content"},
         headers={"Authorization": f"Bearer {token2}"},
     )
-    
+
     # User1 should only see their note
     r1 = await async_client.get("/notes", headers={"Authorization": f"Bearer {token1}"})
     notes1 = r1.json()
     assert len(notes1) == 1
     assert notes1[0]["title"] == "User1 Note"
-    
+
     # User2 should only see their note
     r2 = await async_client.get("/notes", headers={"Authorization": f"Bearer {token2}"})
     notes2 = r2.json()
     assert len(notes2) == 1
     assert notes2[0]["title"] == "User2 Note"
-
