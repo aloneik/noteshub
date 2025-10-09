@@ -86,6 +86,9 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
+    - name: Verify Docker Compose
+      run: docker compose version
+
     - name: Build Docker image
       run: |
         cd backend
@@ -94,8 +97,8 @@ jobs:
     - name: Test Docker container
       run: |
         cd backend
-        # Start services with docker-compose
-        docker-compose up -d
+        # Start services with docker compose
+        docker compose up -d
         
         # Wait for services to be ready
         sleep 30
@@ -105,7 +108,7 @@ jobs:
         curl -f http://localhost:8000/health || echo "Health endpoint not available"
         
         # Stop services
-        docker-compose down
+        docker compose down
 
   docker-compose-test:
     runs-on: ubuntu-latest
@@ -115,20 +118,23 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Test with docker-compose
+    - name: Verify Docker Compose
+      run: docker compose version
+
+    - name: Test with docker compose
       run: |
         cd backend
         # Start all services
-        docker-compose up -d
+        docker compose up -d
         
         # Wait for services
         sleep 45
         
         # Run tests inside container
-        docker-compose exec -T web python -m pytest tests/ -v
+        docker compose exec -T web python -m pytest tests/ -v
         
         # Cleanup
-        docker-compose down -v
+        docker compose down -v
       env:
         DATABASE_URL: "postgresql+asyncpg://postgres:password@db:5432/notehub_db"
 

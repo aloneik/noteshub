@@ -154,6 +154,8 @@ Built images are tagged with:
 - Semantic version (for releases)
 - Git SHA (always)
 
+**Note**: All workflows use `docker compose` (without hyphen) which is the modern Docker Compose command available in GitHub Actions runners.
+
 ### Coverage Reports
 
 Test coverage is:
