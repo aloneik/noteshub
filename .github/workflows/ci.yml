@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main, master, develop ]
 
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
 env:
   PYTHON_VERSION: "3.13"
   DATABASE_URL: "postgresql+asyncpg://test_user:test_password@localhost:5432/test_db"
@@ -147,6 +152,10 @@ jobs:
 
   security-scan:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    permissions:
+      contents: read
+      security-events: write
 
     steps:
     - name: Checkout code
@@ -162,8 +171,10 @@ jobs:
 
     - name: Upload Trivy scan results
       uses: github/codeql-action/upload-sarif@v3
+      if: always() && hashFiles('trivy-results.sarif') != ''
       with:
         sarif_file: 'trivy-results.sarif'
+        category: 'trivy-fs-scan'
 
   lint:
     runs-on: ubuntu-latest
