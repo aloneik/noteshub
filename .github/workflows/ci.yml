@@ -99,10 +99,10 @@ jobs:
         cd backend
         # Start services with docker compose
         docker compose up -d
-        
+
         # Wait for services to be ready
         sleep 30
-        
+
         # Test API endpoints
         curl -f http://localhost:8000/docs || exit 1
         curl -f http://localhost:8000/health || echo "Health endpoint not available"
@@ -126,21 +126,28 @@ jobs:
         cd backend
         # Start all services
         docker compose up -d
-        
+
         # Wait for services
         sleep 45
-        
-        # Run tests inside container
-        docker compose exec -T web python -m pytest tests/ -v
-        
-        # Cleanup
+
+        # Check running services
+        docker compose ps
+
+        # Check backend container logs
+        docker compose logs backend
+
+        # Verify backend service is healthy
+        docker compose exec -T backend python -c "print('Backend container is working')"
+
+        # Run tests inside backend container
+        docker compose exec -T backend python -m pytest tests/ -v --tb=short        # Cleanup
         docker compose down -v
       env:
-        DATABASE_URL: "postgresql+asyncpg://postgres:password@db:5432/notehub_db"
+        DATABASE_URL: "postgresql+asyncpg://postgres:postgres@db:5432/notehub"
 
   security-scan:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
