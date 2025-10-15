@@ -15,7 +15,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/register", response_model=UserOut)
-async def register(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
+async def register(user_in: UserCreate, db: AsyncSession = Depends(get_db)) -> UserOut:
     existing = await crud.get_user_by_username(db, user_in.username)
     if existing:
         raise HTTPException(
@@ -30,7 +30,7 @@ async def register(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
 @router.post("/login", response_model=Token)
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)
-):
+) -> Token:
     user = await crud.get_user_by_username(db, form_data.username)
     if not user or not verify_password(form_data.password, str(user.password_hash)):
         raise HTTPException(

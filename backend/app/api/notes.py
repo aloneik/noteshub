@@ -1,3 +1,5 @@
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -11,7 +13,7 @@ router = APIRouter(prefix="/notes", tags=["notes"])
 @router.get("", response_model=list[NoteOut])
 async def get_notes(
     db: AsyncSession = Depends(get_db), username: str = Depends(get_current_username)
-):
+) -> Any:
     # In MVP we use username as identifier to fetch user and their notes
     from app.db.crud import (
         get_user_by_username,  # local import to avoid circulars in small files
@@ -28,7 +30,7 @@ async def create_note(
     note_in: NoteCreate,
     db: AsyncSession = Depends(get_db),
     username: str = Depends(get_current_username),
-):
+) -> Any:
     from app.db.crud import get_user_by_username
 
     user = await get_user_by_username(db, username)
@@ -47,7 +49,7 @@ async def update_note(
     note_in: NoteUpdate,
     db: AsyncSession = Depends(get_db),
     username: str = Depends(get_current_username),
-):
+) -> Any:
     from app.db.crud import get_user_by_username
 
     user = await get_user_by_username(db, username)
@@ -70,7 +72,7 @@ async def delete_note(
     note_id: int,
     db: AsyncSession = Depends(get_db),
     username: str = Depends(get_current_username),
-):
+) -> None:
     from app.db.crud import get_user_by_username
 
     user = await get_user_by_username(db, username)

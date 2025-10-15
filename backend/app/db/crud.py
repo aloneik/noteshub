@@ -69,12 +69,12 @@ async def delete_note(db: AsyncSession, note: models.Note) -> None:
 
 
 # Plans
-async def list_plans(db: AsyncSession, note_id: int):
+async def list_plans(db: AsyncSession, note_id: int) -> Sequence[models.Plan]:
     res = await db.execute(select(models.Plan).where(models.Plan.note_id == note_id))
     return res.scalars().all()
 
 
-async def get_plan(db: AsyncSession, plan_id: int, note_id: int):
+async def get_plan(db: AsyncSession, plan_id: int, note_id: int) -> Optional[models.Plan]:
     res = await db.execute(
         select(models.Plan).where(
             models.Plan.id == plan_id, models.Plan.note_id == note_id
@@ -83,7 +83,7 @@ async def get_plan(db: AsyncSession, plan_id: int, note_id: int):
     return res.scalar_one_or_none()
 
 
-async def create_plan(db: AsyncSession, note_id: int, title: str, is_done: bool):
+async def create_plan(db: AsyncSession, note_id: int, title: str, is_done: bool) -> models.Plan:
     plan = models.Plan(title=title, is_done=is_done, note_id=note_id)
     db.add(plan)
     await db.commit()
@@ -91,11 +91,11 @@ async def create_plan(db: AsyncSession, note_id: int, title: str, is_done: bool)
     return plan
 
 
-async def update_plan(db: AsyncSession, plan: models.Plan, *, title=None, is_done=None):
+async def update_plan(db: AsyncSession, plan: models.Plan, *, title: Optional[str] = None, is_done: Optional[bool] = None) -> models.Plan:
     if title is not None:
-        plan.title = title
+        plan.title = title  # type: ignore[assignment]
     if is_done is not None:
-        plan.is_done = is_done
+        plan.is_done = is_done  # type: ignore[assignment]
     await db.commit()
     await db.refresh(plan)
     return plan

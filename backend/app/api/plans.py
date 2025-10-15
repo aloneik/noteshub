@@ -1,3 +1,5 @@
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,7 +15,7 @@ async def get_plans(
     note_id: int,
     db: AsyncSession = Depends(get_db),
     username: str = Depends(get_current_username),
-):
+) -> Any:
     from app.db.crud import get_user_by_username
 
     user = await get_user_by_username(db, username)
@@ -34,7 +36,7 @@ async def create_plan(
     plan_in: PlanCreate,
     db: AsyncSession = Depends(get_db),
     username: str = Depends(get_current_username),
-):
+) -> Any:
     from app.db.crud import get_user_by_username
 
     user = await get_user_by_username(db, username)
@@ -59,7 +61,7 @@ async def update_plan(
     plan_in: PlanUpdate,
     db: AsyncSession = Depends(get_db),
     username: str = Depends(get_current_username),
-):
+) -> Any:
     from app.db.crud import get_user_by_username
 
     user = await get_user_by_username(db, username)
@@ -88,7 +90,7 @@ async def delete_plan(
     plan_id: int,
     db: AsyncSession = Depends(get_db),
     username: str = Depends(get_current_username),
-):
+) -> None:
     from app.db.crud import get_user_by_username
 
     user = await get_user_by_username(db, username)

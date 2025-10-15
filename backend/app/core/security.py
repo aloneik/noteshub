@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from jose import jwt
+from jose.exceptions import JWTError
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -16,7 +17,7 @@ def get_password_hash(password: str | bytes) -> str:
         password = password_bytes.decode("utf-8", errors="ignore")
     elif isinstance(password, bytes):
         password = password[:72]
-    return pwd_context.hash(password)
+    return str(pwd_context.hash(password))
 
 
 def verify_password(plain_password: str | bytes, password_hash: str) -> bool:
@@ -26,7 +27,7 @@ def verify_password(plain_password: str | bytes, password_hash: str) -> bool:
         plain_password = password_bytes.decode("utf-8", errors="ignore")
     elif isinstance(plain_password, bytes):
         plain_password = plain_password[:72]
-    return pwd_context.verify(plain_password, password_hash)
+    return bool(pwd_context.verify(plain_password, password_hash))
 
 
 def create_access_token(
@@ -39,11 +40,12 @@ def create_access_token(
         "iat": int(now.timestamp()),
         "exp": int(expire.timestamp()),
     }
-    return jwt.encode(to_encode, secret_key, algorithm=JWT_ALGORITHM)
+    return str(jwt.encode(to_encode, secret_key, algorithm=JWT_ALGORITHM))
 
 
-def decode_token(token: str, *, secret_key: str) -> Optional[dict]:
+def decode_token(token: str, *, secret_key: str) -> Optional[Dict[str, Any]]:
     try:
-        return jwt.decode(token, secret_key, algorithms=[JWT_ALGORITHM])
-    except Exception:
+        result = jwt.decode(token, secret_key, algorithms=[JWT_ALGORITHM])
+        return dict(result) if result else None
+    except (JWTError, ValueError, KeyError):
         return None

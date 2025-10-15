@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from typing import AsyncGenerator, Dict
 
 from fastapi import FastAPI
 
@@ -10,7 +11,7 @@ from app.db.base import init_db
 
 
 @asynccontextmanager
-async def lifespan(_app: FastAPI):  # noqa: F811, ARG001
+async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:  # noqa: F811, ARG001
     await init_db()
     yield
 
@@ -24,10 +25,10 @@ app.include_router(plans_router)
 
 
 @app.get("/")
-def root():
+def root() -> Dict[str, str]:
     return {"message": "Welcome to NoteHub!"}
 
 
 @app.get("/health")
-def health_check():
+def health_check() -> Dict[str, str]:
     return {"status": "healthy", "service": "NoteHub API"}
