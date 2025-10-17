@@ -1,21 +1,21 @@
 # CORS Configuration Guide
 
-## Что такое CORS?
+## What is CORS?
 
-**CORS (Cross-Origin Resource Sharing)** — механизм безопасности браузера, который контролирует, какие веб-сайты могут обращаться к вашему API.
+**CORS (Cross-Origin Resource Sharing)** is a browser security mechanism that controls which websites can access your API.
 
-### Когда нужен CORS?
+### When is CORS needed?
 
-CORS требуется, когда фронтенд и бэкенд работают на разных:
-- **Доменах**: `example.com` vs `api.example.com`
-- **Портах**: `localhost:8000` vs `localhost:5173`
-- **Протоколах**: `http://` vs `https://`
+CORS is required when frontend and backend run on different:
+- **Domains**: `example.com` vs `api.example.com`
+- **Ports**: `localhost:8000` vs `localhost:5173`
+- **Protocols**: `http://` vs `https://`
 
-## Текущая конфигурация
+## Current Configuration
 
-### Development (по умолчанию)
+### Development (default)
 
-CORS разрешен для локальных фронтендов:
+CORS is allowed for local frontends:
 ```python
 CORS_ORIGINS = [
     "http://localhost:3000",   # React (npm start)
@@ -29,33 +29,33 @@ CORS_ORIGINS = [
 
 ### Production
 
-Установите переменную окружения `CORS_ORIGINS`:
+Set the `CORS_ORIGINS` environment variable:
 
 ```bash
-# .env файл или environment variables
+# .env file or environment variables
 CORS_ORIGINS=https://notehub.com,https://www.notehub.com,https://app.notehub.com
 ```
 
-Или в Docker:
+Or in Docker:
 ```yaml
 environment:
   - CORS_ORIGINS=https://notehub.com,https://www.notehub.com
 ```
 
-## Настройки CORS
+## CORS Settings
 
-### Текущие разрешения
+### Current Permissions
 
-| Настройка | Значение | Описание |
-|-----------|----------|----------|
-| `allow_origins` | См. выше | Список разрешенных источников |
-| `allow_credentials` | `True` | Разрешить cookies и Authorization headers |
-| `allow_methods` | `["*"]` | Все HTTP методы (GET, POST, PUT, DELETE, etc.) |
-| `allow_headers` | `["*"]` | Все заголовки (Authorization, Content-Type, etc.) |
+| Setting | Value | Description |
+|---------|-------|-------------|
+| `allow_origins` | See above | List of allowed origins |
+| `allow_credentials` | `True` | Allow cookies and Authorization headers |
+| `allow_methods` | `["*"]` | All HTTP methods (GET, POST, PUT, DELETE, etc.) |
+| `allow_headers` | `["*"]` | All headers (Authorization, Content-Type, etc.) |
 
-### Для production рекомендуется
+### Recommended for production
 
-Ограничить методы и заголовки:
+Restrict methods and headers:
 
 ```python
 app.add_middleware(
@@ -67,22 +67,22 @@ app.add_middleware(
 )
 ```
 
-## Тестирование CORS
+## Testing CORS
 
-### Из браузера (DevTools Console)
+### From browser (DevTools Console)
 
 ```javascript
-// Проверка CORS с фронтенда
+// Test CORS from frontend
 fetch('http://localhost:8000/health')
   .then(r => r.json())
-  .then(data => console.log('✅ CORS работает!', data))
-  .catch(err => console.error('❌ CORS ошибка:', err));
+  .then(data => console.log('✅ CORS works!', data))
+  .catch(err => console.error('❌ CORS error:', err));
 ```
 
-### С curl
+### With curl
 
 ```bash
-# Проверка CORS headers
+# Check CORS headers
 curl -H "Origin: http://localhost:5173" \
      -H "Access-Control-Request-Method: GET" \
      -H "Access-Control-Request-Headers: Authorization" \
@@ -90,7 +90,7 @@ curl -H "Origin: http://localhost:5173" \
      -v http://localhost:8000/api/notes
 ```
 
-Должны быть заголовки:
+Should return headers:
 ```
 Access-Control-Allow-Origin: http://localhost:5173
 Access-Control-Allow-Credentials: true

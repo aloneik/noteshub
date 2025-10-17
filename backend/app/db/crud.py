@@ -2,6 +2,7 @@ from typing import Optional, Sequence
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.db import models
 
@@ -26,7 +27,11 @@ async def create_user(
 
 # Notes
 async def list_notes(db: AsyncSession, owner_id: int) -> Sequence[models.Note]:
-    res = await db.execute(select(models.Note).where(models.Note.owner_id == owner_id))
+    res = await db.execute(
+        select(models.Note)
+        .where(models.Note.owner_id == owner_id)
+        .options(selectinload(models.Note.plans))
+    )
     return res.scalars().all()
 
 
@@ -34,9 +39,9 @@ async def get_note(
     db: AsyncSession, note_id: int, owner_id: int
 ) -> Optional[models.Note]:
     res = await db.execute(
-        select(models.Note).where(
-            models.Note.id == note_id, models.Note.owner_id == owner_id
-        )
+        select(models.Note)
+        .where(models.Note.id == note_id, models.Note.owner_id == owner_id)
+        .options(selectinload(models.Note.plans))
     )
     return res.scalar_one_or_none()
 
@@ -47,7 +52,7 @@ async def create_note(
     note = models.Note(title=title, content=content, owner_id=owner_id)
     db.add(note)
     await db.commit()
-    await db.refresh(note)
+    await db.refresh(note, ["plans"])  # Explicitly refresh with plans relationship
     return note
 
 
@@ -59,7 +64,7 @@ async def update_note(
     if content is not None:
         note.content = content  # type: ignore[assignment]
     await db.commit()
-    await db.refresh(note)
+    await db.refresh(note, ["plans"])  # Explicitly refresh with plans relationship
     return note
 
 

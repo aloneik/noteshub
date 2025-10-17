@@ -1,4 +1,6 @@
+from __future__ import annotations
 from typing import Optional
+from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -49,6 +51,9 @@ class NoteOut(NoteBase):
 
     id: int
     owner_id: int
+    created_at: datetime
+    updated_at: datetime
+    plans: list["PlanOut"] = []
 
 
 # Plan schemas
@@ -71,3 +76,4 @@ class PlanOut(PlanBase):
 
     id: int
     note_id: int
+    created_at: datetime
