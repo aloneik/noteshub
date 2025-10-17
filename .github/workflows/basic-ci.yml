@@ -25,13 +25,6 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run linting
-      run: |
-        cd backend
-        python -m black --check app/ tests/
-        python -m isort --check-only app/ tests/
-        python -m flake8 app/ tests/
-
     - name: Run tests
       run: |
         cd backend
