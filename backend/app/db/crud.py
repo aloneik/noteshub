@@ -52,7 +52,9 @@ async def create_note(
     note = models.Note(title=title, content=content, owner_id=owner_id)
     db.add(note)
     await db.commit()
-    await db.refresh(note, ["plans"])  # Explicitly refresh with plans relationship
+    await db.refresh(note)  # Refresh to get all scalar attributes (id, created_at, updated_at)
+    # Load plans relationship explicitly (empty list for new note)
+    await db.refresh(note, ["plans"])
     return note
 
 
@@ -64,7 +66,9 @@ async def update_note(
     if content is not None:
         note.content = content  # type: ignore[assignment]
     await db.commit()
-    await db.refresh(note, ["plans"])  # Explicitly refresh with plans relationship
+    await db.refresh(note)  # Refresh to get updated_at
+    # Load plans relationship explicitly
+    await db.refresh(note, ["plans"])
     return note
 
 
