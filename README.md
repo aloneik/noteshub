@@ -63,11 +63,15 @@ uvicorn app.main:app --reload
 
 ## Testing
 
+### Backend (Automated)
 Run the complete test suite (37 atomic tests):
-`ash
+```bash
 cd backend
 python -m pytest tests/ -v
-`
+```
+
+### Frontend (Manual)
+See [MANUAL_TESTING.md](MANUAL_TESTING.md) for complete testing scenarios and checklist.
 
 ## Data Model
 
