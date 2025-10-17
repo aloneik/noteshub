@@ -98,19 +98,19 @@ Access-Control-Allow-Methods: *
 Access-Control-Allow-Headers: *
 ```
 
-## Безопасность
+## Security
 
-### ⚠️ Небезопасно
+### ⚠️ Insecure
 
 ```python
-# НЕ используйте в production!
-allow_origins=["*"]  # Разрешает ВСЕ домены
+# DO NOT use in production!
+allow_origins=["*"]  # Allows ALL domains
 ```
 
-### ✅ Безопасно
+### ✅ Secure
 
 ```python
-# Явно указывайте разрешенные домены
+# Explicitly specify allowed domains
 allow_origins=[
     "https://notehub.com",
     "https://www.notehub.com",
@@ -119,31 +119,31 @@ allow_origins=[
 
 ## Troubleshooting
 
-### Ошибка: "blocked by CORS policy"
+### Error: "blocked by CORS policy"
 
-**Причина**: Фронтенд не в списке разрешенных origins
+**Cause**: Frontend is not in the allowed origins list
 
-**Решение**:
-1. Проверьте, что фронтенд запущен на разрешенном порту
-2. Добавьте URL фронтенда в `CORS_ORIGINS`
-3. Перезапустите бэкенд
+**Solution**:
+1. Check that frontend is running on an allowed port
+2. Add frontend URL to `CORS_ORIGINS`
+3. Restart backend
 
-### Ошибка: "credentials mode is 'include'"
+### Error: "credentials mode is 'include'"
 
-**Причина**: `allow_credentials=True` требует конкретные origins (не `*`)
+**Cause**: `allow_credentials=True` requires specific origins (not `*`)
 
-**Решение**: Укажите точные домены вместо `*`
+**Solution**: Specify exact domains instead of `*`
 
-### Ошибка в production
+### Error in production
 
-**Проблема**: CORS работает локально, но не в production
+**Problem**: CORS works locally but not in production
 
-**Решение**:
-1. Убедитесь, что установлена переменная `CORS_ORIGINS`
-2. Проверьте, что домены указаны с правильным протоколом (`https://`)
-3. Проверьте логи: `docker compose logs backend`
+**Solution**:
+1. Ensure `CORS_ORIGINS` environment variable is set
+2. Check that domains are specified with correct protocol (`https://`)
+3. Check logs: `docker compose logs backend`
 
-## Примеры конфигурации
+## Configuration Examples
 
 ### Kubernetes
 
@@ -170,7 +170,7 @@ railway variables set CORS_ORIGINS="https://notehub.com,https://www.notehub.com"
 heroku config:set CORS_ORIGINS="https://notehub.com,https://www.notehub.com"
 ```
 
-## Дополнительные ресурсы
+## Additional Resources
 
 - [MDN CORS Documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
 - [FastAPI CORS Middleware](https://fastapi.tiangolo.com/tutorial/cors/)

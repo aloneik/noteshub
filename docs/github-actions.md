@@ -1,6 +1,6 @@
-# GitHub Actions CI/CD Setup для NoteHub
+# GitHub Actions CI/CD Setup for NoteHub
 
-Настройка GitHub Actions workflows для проекта NoteHub - автоматизация тестирования, линтинга и деплоя FastAPI приложения.
+Setting up GitHub Actions workflows for the NoteHub project - automating testing, linting, and deployment of the FastAPI application.
 
 ## Workflows Overview
 

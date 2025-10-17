@@ -24,6 +24,7 @@ app = FastAPI(title=settings.API_TITLE, version=settings.API_VERSION, lifespan=l
 # In production, replace origins with specific domains via CORS_ORIGINS environment variable
 app.add_middleware(
     CORSMiddleware,
+    allow_origin_regex=r"https://.*\.trycloudflare\.com",  # Allow all Cloudflare tunnels
     allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],  # GET, POST, PUT, DELETE, etc.
