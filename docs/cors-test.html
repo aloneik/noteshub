@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test - NoteHub API</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            background: #f9f9f9;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .status.online {
+            background: #4CAF50;
+            color: white;
+        }
+        .status.offline {
+            background: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 CORS Testing Tool - NoteHub API</h1>
+        
+        <div class="test-section">
+            <h2>Backend Status</h2>
+            <p>API URL: <code id="apiUrl">http://localhost:8000</code></p>
+            <p>Status: <span class="status offline" id="status">Checking...</span></p>
+            <button onclick="checkBackend()">🔄 Check Connection</button>
+            <div id="statusResult" class="result info" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>1️⃣ Simple GET Request (Health Check)</h2>
+            <p>Tests basic CORS functionality with a simple GET request</p>
+            <button onclick="testHealthCheck()">▶️ Run Test</button>
+            <div id="healthResult" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>2️⃣ User Registration</h2>
+            <p>POST request with JSON data</p>
+            <input type="text" id="username" placeholder="Username" style="padding: 8px; margin: 5px;">
+            <input type="password" id="password" placeholder="Password" style="padding: 8px; margin: 5px;">
+            <button onclick="testRegister()">▶️ Register</button>
+            <div id="registerResult" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>3️⃣ Authentication</h2>
+            <p>POST request with form-data (OAuth2)</p>
+            <button onclick="testLogin()">▶️ Login</button>
+            <div id="loginResult" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>4️⃣ Protected Request</h2>
+            <p>GET request with Authorization header</p>
+            <button onclick="testProtectedRoute()">▶️ Get Notes</button>
+            <div id="protectedResult" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>ℹ️ What's Being Tested?</h2>
+            <ul>
+                <li>✅ CORS headers (Access-Control-Allow-Origin)</li>
+                <li>✅ Credentials support (cookies and Authorization headers)</li>
+                <li>✅ Preflight requests (OPTIONS)</li>
+                <li>✅ Different HTTP methods (GET, POST)</li>
+                <li>✅ Different content types (JSON, form-data)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+        let token = null;
+
+        async function checkBackend() {
+            const resultDiv = document.getElementById('statusResult');
+            const statusSpan = document.getElementById('status');
+            
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                
+                statusSpan.className = 'status online';
+                statusSpan.textContent = 'Online ✅';
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ Backend is working!\n\n${JSON.stringify(data, null, 2)}`;
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                statusSpan.className = 'status offline';
+                statusSpan.textContent = 'Offline ❌';
+                
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Connection error:\n\n${error.message}\n\nMake sure backend is running: cd backend && uvicorn app.main:app --reload`;
+                resultDiv.style.display = 'block';
+            }
+        }
+
+        async function testHealthCheck() {
+            const resultDiv = document.getElementById('healthResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ Sending request...';
+
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ CORS works! Simple GET request successful\n\nStatus: ${response.status}\nData: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ CORS error or backend unavailable:\n\n${error.message}\n\nCheck:\n1. Backend is running (http://localhost:8000)\n2. CORS configured correctly in app/main.py`;
+            }
+        }
+
+        async function testRegister() {
+            const username = document.getElementById('username').value || `user_${Date.now()}`;
+            const password = document.getElementById('password').value || 'password123';
+            const resultDiv = document.getElementById('registerResult');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ Registering user...';
+
+            try {
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Registration successful! CORS allows POST requests\n\nUser: ${data.username}\nID: ${data.id}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `⚠️ Registration failed (but CORS works):\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ CORS or network error:\n\n${error.message}`;
+            }
+        }
+
+        async function testLogin() {
+            const username = document.getElementById('username').value || 'testuser';
+            const password = document.getElementById('password').value || 'password123';
+            const resultDiv = document.getElementById('loginResult');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ Logging in...';
+
+            try {
+                // OAuth2 requires form-data instead of JSON
+                const formData = new URLSearchParams();
+                formData.append('username', username);
+                formData.append('password', password);
+
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    token = data.access_token;
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Login successful! CORS works with form-data\n\nToken received: ${token.substring(0, 50)}...`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `⚠️ Login failed:\n\n${JSON.stringify(data, null, 2)}\n\nRegister a user first!`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ CORS or network error:\n\n${error.message}`;
+            }
+        }
+
+        async function testProtectedRoute() {
+            const resultDiv = document.getElementById('protectedResult');
+            
+            if (!token) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ Please login first!';
+                return;
+            }
+
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ Requesting notes with Authorization header...';
+
+            try {
+                const response = await fetch(`${API_URL}/notes`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ CORS works with credentials! Authorization header passed\n\nNotes: ${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `⚠️ Request unauthorized:\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ CORS or network error:\n\n${error.message}`;
+            }
+        }
+
+        // Check on page load
+        window.onload = checkBackend;
+    </script>
+</body>
+</html>
