@@ -4,55 +4,90 @@ A FastAPI-based notes and daily plans management application with hierarchical d
 
 ## Project Structure
 
-`
+```
 notehub/
- .github/                    # GitHub workflows and AI coding instructions
-    copilot-instructions.md
- .gitignore                 # Main gitignore file
- README.md                  # This file
- backend/                   # FastAPI backend application
-     .gitignore            # Backend-specific gitignore
-     README.md             # Backend documentation
-     requirements.txt      # Python dependencies
-     docker-compose.yml    # Docker configuration
-     Dockerfile           # Docker image definition
-     app/                 # Main application code
-        main.py         # FastAPI app initialization
-        api/            # API route handlers
-        core/           # Core functionality (security, config)
-        db/             # Database models and operations
-     tests/              # Test suite (37 atomic tests)
-         test_auth_notes.py    # Authentication and basic notes
-         test_notes_crud.py    # Complete CRUD for notes  
-         test_plans.py         # Complete CRUD for plans
-`
+├── .github/                    # GitHub workflows and AI coding instructions
+│   └── copilot-instructions.md
+├── backend/                    # FastAPI backend application
+│   ├── app/                   # Main application code
+│   │   ├── api/              # API route handlers
+│   │   ├── core/             # Core functionality (security, config)
+│   │   └── db/               # Database models and operations
+│   ├── tests/                 # Test suite (37 atomic tests)
+│   └── docker-compose.yml     # Docker configuration
+├── web_frontend/              # React + TypeScript web frontend
+│   ├── src/                  # React components and logic
+│   │   ├── components/       # UI components
+│   │   ├── api/              # API client
+│   │   └── store/            # State management (Zustand)
+│   └── docker-compose.yml    # Frontend Docker config
+├── desktop/                   # Qt desktop application (NEW!)
+│   ├── src/                  # Python + PySide6 code
+│   │   ├── ui/               # Desktop UI windows
+│   │   ├── api/              # API client
+│   │   └── models/           # Data models
+│   ├── requirements.txt      # Desktop dependencies
+│   └── build.py              # Nuitka build script
+├── docs/                      # Documentation
+└── README.md                  # This file
+```
 
 ## Tech Stack
 
-- **Backend**: FastAPI + Python 3.13
+### Backend
+- **Framework**: FastAPI + Python 3.13
 - **Database**: PostgreSQL (production) / SQLite (tests)
 - **ORM**: SQLAlchemy 2.0 (async)
 - **Authentication**: OAuth2 + JWT
 - **Testing**: pytest with 37 atomic tests
-- **Docker**: Full containerization support
+
+### Web Frontend
+- **Framework**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **State**: Zustand + React Query
+- **Styling**: Tailwind CSS
+- **Router**: React Router
+
+### Desktop Application (NEW! 🎉)
+- **Framework**: PySide6 (Qt for Python)
+- **Build**: Nuitka (single executable)
+- **Size**: ~20 MB standalone .exe
+- **Platforms**: Windows, Linux, macOS
+
+### Infrastructure
+- **Containers**: Docker + Docker Compose
+- **Tunneling**: Cloudflare (for internet access)
+- **CI/CD**: GitHub Actions
 
 ## Quick Start
 
-### Using Docker (Recommended)
-`ash
+### Backend (FastAPI)
+```bash
 cd backend
 docker compose up --build
-`
+# Backend runs on http://localhost:8000
+```
 
-### Local Development
-`ash
-cd backend
-python -m venv venv
-venv\Scripts\Activate.ps1  # Windows
+### Web Frontend (React)
+```bash
+cd web_frontend
+docker compose up --build
+# Frontend runs on http://localhost:5173
+```
+
+### Desktop Application (Qt)
+```bash
+cd desktop
+python -m venv .venv
+.venv\Scripts\Activate.ps1  # Windows
 pip install -r requirements.txt
-$env:PYTHONPATH="$PWD"    # Critical for imports
-uvicorn app.main:app --reload
-`
+python src/main.py
+```
+
+**See individual README files for detailed instructions:**
+- [backend/README.md](backend/README.md) - Backend setup and API docs
+- [web_frontend/README.md](web_frontend/README.md) - Web frontend guide
+- [desktop/README.md](desktop/README.md) - Desktop app development and building
 
 ## API Endpoints
 

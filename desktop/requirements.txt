@@ -1,0 +1,21 @@
+# NoteHub Desktop Requirements
+
+# Qt Framework
+PySide6>=6.6.0
+PySide6-Essentials>=6.6.0
+PySide6-Addons>=6.6.0
+
+# HTTP Client
+requests>=2.31.0
+urllib3>=2.1.0
+
+# Data Validation
+pydantic>=2.5.0
+
+# Date/Time
+python-dateutil>=2.8.2
+
+# Build Tools (for development)
+nuitka>=2.0.0
+ordered-set>=4.1.0
+zstandard>=0.22.0
