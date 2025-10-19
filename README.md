@@ -131,8 +131,9 @@ python generate_secret_key.py
 
 #### Frontend: Vercel
 - **Zero-config deployment**
-- **Global CDN**
-- Documentation coming soon
+- **Global CDN + Auto-HTTPS**
+- **Auto-deploy from GitHub**
+- See [docs/VERCEL_DEPLOY.md](docs/VERCEL_DEPLOY.md) or [Quick Start (2 min)](docs/VERCEL_QUICK_START.md)
 
 #### Quick Deploy with Blueprint:
 1. Push code to GitHub
@@ -141,11 +142,20 @@ python generate_secret_key.py
 4. Get your API URL: `https://notehub-backend.onrender.com`
 
 **📚 Deployment Documentation:**
+
+**Backend (Render):**
 - 🚀 [Quick Deploy (5 min)](docs/QUICK_DEPLOY.md) - Fast start
 - 📖 [Full Guide](docs/RENDER_DEPLOY.md) - Detailed instructions
-- ✅ [Deployment Checklist](docs/DEPLOYMENT_CHECKLIST.md) - Verification
-- 📝 [Summary](docs/RENDER_SETUP_SUMMARY.md) - What's configured
 - 🔖 [Quick Reference](docs/RENDER_QUICK_REFERENCE.md) - Commands cheat sheet
+
+**Frontend (Vercel):**
+- ⚡ [Quick Start (2 min)](docs/VERCEL_QUICK_START.md) - Super fast deploy
+- � [Full Guide](docs/VERCEL_DEPLOY.md) - Complete instructions
+- ⚙️ [Configuration](docs/VERCEL_CONFIG.md) - Advanced setup
+
+**General:**
+- ✅ [Deployment Checklist](docs/DEPLOYMENT_CHECKLIST.md) - Verification
+- 📝 [Complete Summary](docs/RENDER_DEPLOYMENT_COMPLETE.md) - Everything configured
 
 ---
 
@@ -161,7 +171,7 @@ The project includes comprehensive .gitignore files:
 
 Key ignored items:
 - __pycache__/, *.pyc (Python bytecode)
-- env/, .env (Virtual environments and secrets)
+- .env/, .env (Virtual environments and secrets)
 - *.db, 	est*.db (Database files)
 - .pytest_cache/, .coverage (Test artifacts)
 - .vscode/, .idea/ (IDE configurations)

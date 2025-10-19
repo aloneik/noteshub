@@ -6,10 +6,20 @@ This directory contains comprehensive documentation for the NoteHub project.
 
 ### 🚀 Deployment Guides (NEW!)
 
-- **[QUICK_DEPLOY.md](QUICK_DEPLOY.md)** - ⚡ 5-minute backend deployment guide
-- **[RENDER_DEPLOY.md](RENDER_DEPLOY.md)** - Complete Render.com setup
+#### Backend (Render.com)
+- **[QUICK_DEPLOY.md](QUICK_DEPLOY.md)** - ⚡ 5-minute deployment guide
+- **[RENDER_DEPLOY.md](RENDER_DEPLOY.md)** - Complete setup guide
 - **[RENDER_ENV_VARS.md](RENDER_ENV_VARS.md)** - Environment variables reference
-- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Deployment verification checklist
+- **[RENDER_QUICK_REFERENCE.md](RENDER_QUICK_REFERENCE.md)** - Commands cheat sheet
+- **[RENDER_DEPLOYMENT_COMPLETE.md](RENDER_DEPLOYMENT_COMPLETE.md)** - Setup summary
+
+#### Frontend (Vercel)
+- **[VERCEL_QUICK_START.md](VERCEL_QUICK_START.md)** - ⚡ 2-minute deployment guide
+- **[VERCEL_DEPLOY.md](VERCEL_DEPLOY.md)** - Complete deployment guide
+- **[VERCEL_CONFIG.md](VERCEL_CONFIG.md)** - Configuration examples
+
+#### General
+- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Verification checklist
 
 ### CORS Configuration
 
