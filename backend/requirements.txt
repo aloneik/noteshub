@@ -1,8 +1,10 @@
+# Core
 fastapi
 uvicorn
+
+# Database (async)
 sqlalchemy
-psycopg2-binary
-asyncpg
+asyncpg  # Async PostgreSQL driver (DO NOT use psycopg2 - it's synchronous)
 alembic
 pydantic[email]
 passlib[bcrypt]
