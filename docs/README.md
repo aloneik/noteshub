@@ -4,6 +4,13 @@ This directory contains comprehensive documentation for the NoteHub project.
 
 ## 📚 Available Documentation
 
+### 🚀 Deployment Guides (NEW!)
+
+- **[QUICK_DEPLOY.md](QUICK_DEPLOY.md)** - ⚡ 5-minute backend deployment guide
+- **[RENDER_DEPLOY.md](RENDER_DEPLOY.md)** - Complete Render.com setup
+- **[RENDER_ENV_VARS.md](RENDER_ENV_VARS.md)** - Environment variables reference
+- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Deployment verification checklist
+
 ### CORS Configuration
 
 - **[cors-explained.md](cors-explained.md)** - Beginner-friendly explanation of CORS

@@ -114,9 +114,44 @@ See [MANUAL_TESTING.md](MANUAL_TESTING.md) for complete testing scenarios and ch
 - Full user isolation and authorization
 - CRUD operations for all entities
 
+## Deployment
+
+### 🚀 Production Deployment (FREE)
+
+#### Backend: Render.com
+- **PostgreSQL database included**
+- **Auto-deploy from GitHub**
+- See [docs/RENDER_DEPLOY.md](docs/RENDER_DEPLOY.md) for step-by-step guide
+
+```bash
+# Generate production SECRET_KEY
+cd backend
+python generate_secret_key.py
+```
+
+#### Frontend: Vercel
+- **Zero-config deployment**
+- **Global CDN**
+- Documentation coming soon
+
+#### Quick Deploy with Blueprint:
+1. Push code to GitHub
+2. Connect repository to Render
+3. Render auto-detects `render.yaml` and deploys everything
+4. Get your API URL: `https://notehub-backend.onrender.com`
+
+**📚 Deployment Documentation:**
+- 🚀 [Quick Deploy (5 min)](docs/QUICK_DEPLOY.md) - Fast start
+- 📖 [Full Guide](docs/RENDER_DEPLOY.md) - Detailed instructions
+- ✅ [Deployment Checklist](docs/DEPLOYMENT_CHECKLIST.md) - Verification
+- 📝 [Summary](docs/RENDER_SETUP_SUMMARY.md) - What's configured
+- 🔖 [Quick Reference](docs/RENDER_QUICK_REFERENCE.md) - Commands cheat sheet
+
+---
+
 ## Development
 
-See ackend/README.md for detailed development instructions and .github/copilot-instructions.md for AI coding guidelines.
+See backend/README.md for detailed development instructions and .github/copilot-instructions.md for AI coding guidelines.
 
 ## Git Ignore
 

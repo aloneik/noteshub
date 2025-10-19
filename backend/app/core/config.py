@@ -35,6 +35,11 @@ class Settings:
         "DATABASE_URL", 
         "postgresql+asyncpg://postgres:postgres@localhost:5432/notehub"
     )
+    
+    # Render.com provides postgresql:// but we need postgresql+asyncpg://
+    # Automatically convert for compatibility with asyncpg driver
+    if DATABASE_URL.startswith("postgresql://"):
+        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 
 settings = Settings()
