@@ -6,9 +6,17 @@ from sqlalchemy.orm import DeclarativeBase
 
 
 def get_database_url() -> str:
-    return os.getenv(
+    """Get database URL and convert to asyncpg if needed."""
+    url = os.getenv(
         "DATABASE_URL", "postgresql+asyncpg://postgres:postgres@db:5432/notehub"
     )
+    
+    # Render.com provides postgresql:// but we need postgresql+asyncpg://
+    # Automatically convert for compatibility with asyncpg driver
+    if url.startswith("postgresql://"):
+        url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    
+    return url
 
 
 def create_engine() -> AsyncEngine:
