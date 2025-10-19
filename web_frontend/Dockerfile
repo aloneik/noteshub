@@ -7,6 +7,9 @@ WORKDIR /app
 # Install dependencies first (for better caching)
 COPY package*.json ./
 
+# Install dependencies during build
+RUN npm install
+
 # Copy all files
 COPY . .
 
@@ -15,4 +18,4 @@ EXPOSE 5173
 
 # Start development server
 # The --host flag allows access from outside the container
-CMD ["sh", "-c", "npm install && npm run dev -- --host"]
+CMD ["npm", "run", "dev", "--", "--host"]

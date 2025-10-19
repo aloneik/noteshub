@@ -14,6 +14,8 @@ services:
       - ./vite.config.ts:/app/vite.config.ts
       - ./tailwind.config.js:/app/tailwind.config.js
       - ./postcss.config.js:/app/postcss.config.js
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.node.json:/app/tsconfig.node.json
       # Prevent node_modules from being overwritten
       - /app/node_modules
     environment:
