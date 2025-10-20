@@ -12,6 +12,8 @@ export default function PlansList({ noteId, plans }: PlansListProps) {
   const queryClient = useQueryClient()
   const [isAdding, setIsAdding] = useState(false)
   const [newPlanText, setNewPlanText] = useState('')
+  const [editingPlanId, setEditingPlanId] = useState<number | null>(null)
+  const [editingText, setEditingText] = useState('')
 
   // Create plan mutation
   const createMutation = useMutation({
@@ -26,10 +28,12 @@ export default function PlansList({ noteId, plans }: PlansListProps) {
 
   // Update plan mutation
   const updateMutation = useMutation({
-    mutationFn: ({ planId, is_done }: { planId: number; is_done: boolean }) =>
-      plansApi.update(noteId, planId, { is_done }),
+    mutationFn: ({ planId, title, is_done }: { planId: number; title?: string; is_done?: boolean }) =>
+      plansApi.update(noteId, planId, { title, is_done }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['note', noteId] })
+      setEditingPlanId(null)
+      setEditingText('')
     },
   })
 
@@ -55,6 +59,30 @@ export default function PlansList({ noteId, plans }: PlansListProps) {
   const handleDeletePlan = (planId: number) => {
     if (confirm('Delete this plan?')) {
       deleteMutation.mutate(planId)
+    }
+  }
+
+  const handleStartEdit = (plan: Plan) => {
+    setEditingPlanId(plan.id)
+    setEditingText(plan.title)
+  }
+
+  const handleSaveEdit = (planId: number) => {
+    if (editingText.trim()) {
+      updateMutation.mutate({ planId, title: editingText })
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setEditingPlanId(null)
+    setEditingText('')
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent, planId: number) => {
+    if (e.key === 'Enter') {
+      handleSaveEdit(planId)
+    } else if (e.key === 'Escape') {
+      handleCancelEdit()
     }
   }
 
@@ -84,24 +112,74 @@ export default function PlansList({ noteId, plans }: PlansListProps) {
               type="checkbox"
               checked={plan.is_done}
               onChange={() => handleTogglePlan(plan)}
-              className="w-5 h-5 text-indigo-600 rounded focus:ring-2 focus:ring-indigo-500"
+              className="w-5 h-5 text-indigo-600 rounded focus:ring-2 focus:ring-indigo-500 flex-shrink-0"
+              disabled={editingPlanId === plan.id}
             />
-            <span
-              className={`flex-1 ${
-                plan.is_done ? 'line-through text-gray-500' : 'text-gray-900'
-              }`}
-            >
-              {plan.title}
-            </span>
-            <button
-              onClick={() => handleDeletePlan(plan.id)}
-              className="text-gray-400 hover:text-red-600"
-              disabled={deleteMutation.isPending}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            
+            {editingPlanId === plan.id ? (
+              // Edit mode
+              <>
+                <input
+                  type="text"
+                  value={editingText}
+                  onChange={(e) => setEditingText(e.target.value)}
+                  onKeyDown={(e) => handleKeyPress(e, plan.id)}
+                  className="flex-1 px-2 py-1 border border-indigo-500 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  autoFocus
+                />
+                <button
+                  onClick={() => handleSaveEdit(plan.id)}
+                  className="text-green-600 hover:text-green-700 flex-shrink-0"
+                  disabled={updateMutation.isPending}
+                  title="Save"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  className="text-gray-400 hover:text-gray-600 flex-shrink-0"
+                  title="Cancel"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </>
+            ) : (
+              // View mode
+              <>
+                <span
+                  className={`flex-1 cursor-pointer ${
+                    plan.is_done ? 'line-through text-gray-500' : 'text-gray-900'
+                  }`}
+                  onClick={() => handleStartEdit(plan)}
+                  title="Click to edit"
+                >
+                  {plan.title}
+                </span>
+                <button
+                  onClick={() => handleStartEdit(plan)}
+                  className="text-gray-400 hover:text-indigo-600 flex-shrink-0"
+                  title="Edit"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => handleDeletePlan(plan.id)}
+                  className="text-gray-400 hover:text-red-600 flex-shrink-0"
+                  disabled={deleteMutation.isPending}
+                  title="Delete"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </>
+            )}
           </div>
         ))}
 
