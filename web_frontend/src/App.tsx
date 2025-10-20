@@ -8,6 +8,8 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
 import NotePage from './pages/NotePage'
+import AdminPanel from './pages/AdminPanel'
+import AdminUserDetail from './pages/AdminUserDetail'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,6 +56,14 @@ function App() {
             <Route 
               path="/notes/:id" 
               element={token ? <NotePage /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/admin" 
+              element={token ? <AdminPanel /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/admin/users/:userId" 
+              element={token ? <AdminUserDetail /> : <Navigate to="/login" />} 
             />
             
             {/* Default route */}

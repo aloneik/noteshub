@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { authApi } from '../api/auth';
+import { usersApi } from '../api/users';
 import type { User, AuthState } from '../types';
 
 export const useAuthStore = create<AuthState>()(
@@ -36,17 +37,18 @@ export const useAuthStore = create<AuthState>()(
         try {
           const tokenData = await authApi.login({ username, password });
           
-          // Create user object (backend doesn't return user on login)
-          const user: User = {
-            id: 0, // Will be populated when needed
-            username,
-          };
+          // Set token first
+          set({
+            token: tokenData.access_token,
+            isAuthenticated: true,
+          });
+          
+          // Fetch full user info (including is_admin)
+          const user = await usersApi.getCurrentUser();
           
           // Zustand persist middleware will automatically save to localStorage
           set({
-            token: tokenData.access_token,
             user,
-            isAuthenticated: true,
           });
         } catch (error) {
           throw error;

@@ -18,6 +18,7 @@ class UserOut(UserBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    is_admin: bool = False
 
 
 # Token schemas

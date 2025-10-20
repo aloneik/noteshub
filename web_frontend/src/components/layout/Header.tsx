@@ -23,7 +23,20 @@ export default function Header() {
               <>
                 <span className="text-gray-700">
                   Welcome, <span className="font-medium">{user.username}</span>
+                  {user.is_admin && (
+                    <span className="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                      Admin
+                    </span>
+                  )}
                 </span>
+                {user.is_admin && (
+                  <button
+                    onClick={() => navigate('/admin')}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  >
+                    Admin Panel
+                  </button>
+                )}
                 <button
                   onClick={handleLogout}
                   className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
