@@ -12,7 +12,7 @@ export default function AdminPanel() {
     queryFn: adminApi.getAllUsers,
   })
 
-  const { data: notes, isLoading: notesLoading, error: notesError } = useQuery({
+  const { data: notes, isLoading: notesLoading } = useQuery({
     queryKey: ['admin', 'notes'],
     queryFn: adminApi.getAllNotes,
   })
