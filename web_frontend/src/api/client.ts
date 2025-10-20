@@ -13,9 +13,18 @@ export const api = axios.create({
 // Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // Get token from zustand persist storage
+    const authStorage = localStorage.getItem('auth-storage');
+    if (authStorage) {
+      try {
+        const { state } = JSON.parse(authStorage);
+        const token = state?.token;
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+      } catch (e) {
+        // Invalid JSON, ignore
+      }
     }
     return config;
   },
@@ -27,10 +36,14 @@ api.interceptors.response.use(
   (response) => response,
   (error: AxiosError<ApiError>) => {
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      // Unauthorized - clear zustand persist storage
+      localStorage.removeItem('auth-storage');
+      
+      // Only redirect if we're not already on login/register page
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('/login') && !currentPath.includes('/register')) {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

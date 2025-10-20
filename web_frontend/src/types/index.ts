@@ -66,6 +66,7 @@ export interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
+  initialize: () => Promise<void>;
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string) => Promise<void>;
   logout: () => void;
