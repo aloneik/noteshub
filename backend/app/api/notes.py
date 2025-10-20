@@ -25,6 +25,30 @@ async def get_notes(
     return await crud.list_notes(db, owner_id=int(user.id))
 
 
+@router.get("/{note_id}", response_model=NoteOut)
+async def get_note(
+    note_id: int,
+    db: AsyncSession = Depends(get_db),
+    username: str = Depends(get_current_username)
+) -> Any:
+    # In MVP we use username as identifier to fetch user and their notes
+    from app.db.crud import (
+        get_user_by_username,  # local import to avoid circulars in small files
+    )
+
+    user = await get_user_by_username(db, username)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
+    note = await crud.get_note(db, note_id=note_id, owner_id=int(user.id))
+    if not note:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Note not found"
+        )
+    return note
+
+
 @router.post("", response_model=NoteOut, status_code=status.HTTP_201_CREATED)
 async def create_note(
     note_in: NoteCreate,

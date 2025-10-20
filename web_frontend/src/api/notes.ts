@@ -16,6 +16,15 @@ export const notesApi = {
     }
   },
 
+  get: async (id: number): Promise<Note> => {
+    try {
+      const response = await api.get<Note>(`/notes/${id}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
   // Create a new note
   create: async (data: NoteCreateRequest): Promise<Note> => {
     try {

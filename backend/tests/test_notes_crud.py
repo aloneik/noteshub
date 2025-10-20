@@ -240,3 +240,60 @@ async def test_create_note_without_content_field(async_client):
     note = r.json()
     assert note["title"] == "Title only"
     # Content should be None or empty based on schema default
+
+
+# Get single note tests
+@pytest.mark.asyncio
+async def test_get_single_note(async_client):
+    """Test getting a single note by ID."""
+    token = await create_authenticated_user(async_client, "getsingleuser")
+    note = await create_note(async_client, token, "My Note", "My Content")
+    note_id = note["id"]
+
+    r = await async_client.get(
+        f"/notes/{note_id}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert r.status_code == 200
+    fetched_note = r.json()
+    assert fetched_note["id"] == note_id
+    assert fetched_note["title"] == "My Note"
+    assert fetched_note["content"] == "My Content"
+
+
+@pytest.mark.asyncio
+async def test_get_single_note_nonexistent(async_client):
+    """Test getting a note that doesn't exist."""
+    token = await create_authenticated_user(async_client, "getnonexistentuser")
+
+    r = await async_client.get(
+        "/notes/99999",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert r.status_code == 404
+    assert "not found" in r.json()["detail"].lower()
+
+
+@pytest.mark.asyncio
+async def test_get_single_note_other_user(async_client):
+    """Test getting another user's note."""
+    # User 1 creates a note
+    token1 = await create_authenticated_user(async_client, "noteowner1")
+    note = await create_note(async_client, token1, "Private Note")
+    note_id = note["id"]
+
+    # User 2 tries to access it
+    token2 = await create_authenticated_user(async_client, "intruder4")
+    r = await async_client.get(
+        f"/notes/{note_id}",
+        headers={"Authorization": f"Bearer {token2}"},
+    )
+    assert r.status_code == 404
+    assert "not found" in r.json()["detail"].lower()
+
+
+@pytest.mark.asyncio
+async def test_get_single_note_without_auth(async_client):
+    """Test getting a note without authentication."""
+    r = await async_client.get("/notes/1")
+    assert r.status_code == 401

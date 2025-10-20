@@ -19,12 +19,7 @@ export default function NotePage() {
   // Fetch note
   const { data: note, isLoading, error } = useQuery<Note>({
     queryKey: ['note', noteId],
-    queryFn: async () => {
-      const notes = await notesApi.getAll()
-      const foundNote = notes.find(n => n.id === noteId)
-      if (!foundNote) throw new Error('Note not found')
-      return foundNote
-    },
+    queryFn: () => notesApi.get(noteId),
     enabled: !!noteId,
   })
 
