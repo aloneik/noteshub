@@ -289,3 +289,60 @@ async def test_plans_isolation_between_notes(async_client):
     plans2 = r2.json()
     assert len(plans2) == 1
     assert plans2[0]["title"] == "Plan for note 2"
+
+
+@pytest.mark.asyncio
+async def test_plans_chronological_order(async_client):
+    """Test that plans are returned in chronological order (by created_at)."""
+    import asyncio
+    
+    token, note_id = await create_user_with_note(async_client, "orderuser")
+
+    # Create plans with small delays to ensure different timestamps
+    plan_titles = ["First plan", "Second plan", "Third plan", "Fourth plan"]
+    created_plan_ids = []
+    
+    for title in plan_titles:
+        r = await async_client.post(
+            f"/notes/{note_id}/plans",
+            json={"title": title, "is_done": False},
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        assert r.status_code == 201
+        created_plan_ids.append(r.json()["id"])
+        await asyncio.sleep(0.01)  # Small delay to ensure different timestamps
+
+    # Get all plans
+    r = await async_client.get(
+        f"/notes/{note_id}/plans",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert r.status_code == 200
+    plans = r.json()
+    
+    # Verify plans are in chronological order
+    assert len(plans) == 4
+    for i, expected_title in enumerate(plan_titles):
+        assert plans[i]["title"] == expected_title, f"Plan at index {i} should be '{expected_title}'"
+    
+    # Update the second plan (should not change order)
+    second_plan_id = created_plan_ids[1]
+    r = await async_client.put(
+        f"/notes/{note_id}/plans/{second_plan_id}",
+        json={"title": "Second plan (updated)", "is_done": True},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert r.status_code == 200
+    
+    # Get plans again - order should be preserved
+    r = await async_client.get(
+        f"/notes/{note_id}/plans",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    plans_after_update = r.json()
+    
+    # Order should still be by creation time, not update time
+    assert plans_after_update[0]["title"] == "First plan"
+    assert plans_after_update[1]["title"] == "Second plan (updated)"
+    assert plans_after_update[2]["title"] == "Third plan"
+    assert plans_after_update[3]["title"] == "Fourth plan"

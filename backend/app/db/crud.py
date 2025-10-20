@@ -79,7 +79,11 @@ async def delete_note(db: AsyncSession, note: models.Note) -> None:
 
 # Plans
 async def list_plans(db: AsyncSession, note_id: int) -> Sequence[models.Plan]:
-    res = await db.execute(select(models.Plan).where(models.Plan.note_id == note_id))
+    res = await db.execute(
+        select(models.Plan)
+        .where(models.Plan.note_id == note_id)
+        .order_by(models.Plan.created_at)
+    )
     return res.scalars().all()
 
 
